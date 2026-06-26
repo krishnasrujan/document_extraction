@@ -2,7 +2,7 @@ import argparse
 
 from backend.pipeline import Pipeline
 from backend.ocr.tesseract import TesseractEngine
-from backend.extract.lm_extractor import VisionExtractor
+from backend.extract.vlm_extractor import VisionExtractor
 from backend.confidence.document import score_document
 from backend.confidence.router import route
 

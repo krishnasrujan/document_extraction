@@ -1,33 +1,73 @@
+from backend.models import FieldConfidence, SignalScore
 from backend.confidence.signals import (
     ocr_signal,
     format_signal,
     extraction_signal
 )
 
-from backend.confidence.aggregator import weighted_geometric_mean
 
+class ConfidenceScorer:
 
-def score_field(field, tokens):
+    def calculate(
+        self,
+        field,
+        tokens
+    ):
 
-    signals = [
-        extraction_signal(field),
-        ocr_signal(field, tokens),
-    ]
+        signals = [
+            ocr_signal(
+                field,
+                tokens
+            ),
+            extraction_signal(
+                field
+            ),
+            format_signal(
+                field
+            )
+        ]
 
-    if field.name in [
-        "subtotal",
-        "tax",
-        "total"
-    ]:
-        signals.append(
-            format_signal(field)
+        score = sum(
+            signal["score"] *
+            signal["weight"]
+            for signal in signals
         )
 
-    score = weighted_geometric_mean(
-        signals
-    )
+        return FieldConfidence(
+            raw=round(
+                score,
+                2
+            ),
+            signals=[
+                SignalScore(
+                    name=s["name"],
+                    score=s["score"],
+                    weight=s["weight"],
+                    reason=s["reason"]
+                )
+                for s in signals
+            ]
+        )
 
-    return {
-        "score": score,
-        "signals": signals
-    }
+
+    def document_score(
+        self,
+        fields
+    ):
+
+        scores = []
+
+        for field in fields:
+
+            if field.confidence:
+                scores.append(
+                    field.confidence.raw
+                )
+
+        if not scores:
+            return 0
+
+        return round(
+            sum(scores) / len(scores),
+            2
+        )

@@ -1,6 +1,7 @@
 from backend.align.aligner import align_value
 from backend.validate.format import validate_money
 
+
 def ocr_signal(field, tokens):
     aligned = align_value(
         field.value,
@@ -24,19 +25,29 @@ def ocr_signal(field, tokens):
 
 
 def format_signal(field):
-    result = validate_money(
-        field.value
-    )
+
+    if field.name == "total":
+        result = validate_money(
+            field.value
+        )
+
+        return {
+            "name": "format",
+            "score": result["score"],
+            "weight": 0.2,
+            "reason": result["reason"]
+        }
 
     return {
         "name": "format",
-        "score": result["score"],
+        "score": 1.0,
         "weight": 0.2,
-        "reason": result["reason"]
+        "reason": "no validation required"
     }
 
 
 def extraction_signal(field):
+
     if field.value:
         return {
             "name": "extraction",

@@ -1,6 +1,5 @@
 from enum import Enum
 from typing import Optional
-
 from pydantic import BaseModel, Field
 
 
@@ -21,7 +20,6 @@ class BBox(BaseModel):
         )
 
 
-# OCR model
 class Token(BaseModel):
     text: str
     bbox: BBox
@@ -51,13 +49,15 @@ class FieldSource(str, Enum):
     VLM = "vlm"
     OCR = "ocr"
 
-# LM extracted field
+
 class ExtractedField(BaseModel):
     name: str
     value: Optional[str] = None
     bbox: Optional[BBox] = None
+    page: Optional[int] = None
     source: FieldSource = FieldSource.VLM
     confidence: Optional[FieldConfidence] = None
+    matched_tokens: list[Token] = Field(default_factory=list)
 
 
 class LineItem(BaseModel):
@@ -89,8 +89,7 @@ class ExtractionResult(BaseModel):
     def field(self, name):
         return next(
             (
-                f
-                for f in self.fields
+                f for f in self.fields
                 if f.name == name
             ),
             None
