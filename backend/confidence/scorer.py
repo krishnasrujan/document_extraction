@@ -24,7 +24,7 @@ class ConfidenceScorer:
             signals=[
                 SignalScore(
                     name=signal["name"],
-                    score=signal["score"],
+                    score=round(signal["score"], 4),
                     weight=signal["weight"],
                     reason=signal["reason"]
                 )
