@@ -1,4 +1,4 @@
-readme = """# Document Extraction & Confidence Scoring System
+# Document Extraction & Confidence Scoring System
 
 ## Objective
 
@@ -331,6 +331,5 @@ Current capabilities:
 # Future Improvements
 
 Potential enhancements:
-- Preprocess the images - such as downsizing, better contrast
+- Preprocess the images such as downsizing, better contrast
 - Table extraction support
-"""
