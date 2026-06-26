@@ -1,8 +1,9 @@
 services:
+
   app:
     build: .
-    image: docconf
-    container_name: docconf
+    image: document_extraction
+    container_name: document_extraction
 
     ports:
       - "8501:8501"
@@ -10,9 +11,33 @@ services:
     env_file:
       - .env
 
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+
     volumes:
       - ./samples:/app/samples
       - ./labels:/app/labels
       - ./artifacts:/app/artifacts
 
+    depends_on:
+      - ollama
+
     restart: unless-stopped
+
+
+  ollama:
+    image: ollama/ollama:latest
+
+    container_name: ollama
+
+    ports:
+      - "11434:11434"
+
+    volumes:
+      - ollama_data:/root/.ollama
+
+    restart: unless-stopped
+
+
+volumes:
+  ollama_data:

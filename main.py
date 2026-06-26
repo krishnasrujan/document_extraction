@@ -2,7 +2,7 @@ import argparse
 
 from backend.pipeline import Pipeline
 from backend.ocr.tesseract import TesseractEngine
-from backend.extract.openai_vlm import OpenAIVisionExtractor
+from backend.extract.lm_extractor import VisionExtractor
 from backend.confidence.document import score_document
 from backend.confidence.router import route
 
@@ -20,7 +20,7 @@ def main():
 
     pipeline = Pipeline(
         ocr_engine=TesseractEngine(),
-        extractor=OpenAIVisionExtractor()
+        lm_extractor=VisionExtractor()
     )
 
     result = pipeline.run(
@@ -28,17 +28,9 @@ def main():
         doc_id="document_001"
     )
 
-    score = score_document(
-        result
-    )
-
-    decision = route(
-        score
-    )
-
-    print(
-        decision
-    )
+    score = score_document(result)
+    decision = route(score)
+    print(decision)
 
 
 if __name__ == "__main__":

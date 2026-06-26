@@ -1,33 +1,31 @@
 from backend.ingest.loader import load_pages
-from backend.ocr.tesseract import TesseractEngine
-from backend.extract.openai_vlm import OpenAIVisionExtractor
 from backend.models import ExtractionResult
 
 class Pipeline:
-    def __init__(self, ocr_engine, extractor):
+    def __init__(self, ocr_engine, lm_extractor):
         self.ocr_engine = ocr_engine
-        self.extractor = extractor
+        self.lm_extractor = lm_extractor
 
     def run(self, file_path, doc_id):
+
         pages = load_pages(
             file_path,
             "artifacts"
         )
 
-        tokens = []
-
+        combined_ocr_tokens = []
         for page in pages:
-            tokens.extend(
+            combined_ocr_tokens.extend(
                 self.ocr_engine.read(page)
             )
 
-        fields = self.extractor.extract(
+        lm_extracted_fields = self.lm_extractor.extract_fields(
             pages
         )
 
         return ExtractionResult(
             doc_id=doc_id,
             pages=pages,
-            tokens=tokens,
-            fields=fields
+            tokens=combined_ocr_tokens,
+            fields=lm_extracted_fields
         )

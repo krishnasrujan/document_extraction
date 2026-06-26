@@ -3,19 +3,19 @@ from pytesseract import Output
 from PIL import Image
 
 from backend.models import Token, BBox
-from backend.ocr.base import OCREngine
 
-class TesseractEngine(OCREngine):
+class TesseractEngine:
 
     def read(self, page):
         image = Image.open(page.path)
 
+        # reads the entities and gives them in the form of text along with metadata
         data = pytesseract.image_to_data(
             image,
             output_type=Output.DICT
         )
 
-        tokens = []
+        ocr_tokens = []
 
         for i, text in enumerate(data["text"]):
             text = text.strip()
@@ -24,7 +24,7 @@ class TesseractEngine(OCREngine):
             if not text or conf < 0:
                 continue
 
-            tokens.append(
+            ocr_tokens.append(
                 Token(
                     text=text,
                     conf=conf / 100,
@@ -38,4 +38,4 @@ class TesseractEngine(OCREngine):
                 )
             )
 
-        return tokens
+        return ocr_tokens

@@ -21,6 +21,7 @@ class BBox(BaseModel):
         )
 
 
+# OCR model
 class Token(BaseModel):
     text: str
     bbox: BBox
@@ -50,7 +51,7 @@ class FieldSource(str, Enum):
     VLM = "vlm"
     OCR = "ocr"
 
-
+# LM extracted field
 class ExtractedField(BaseModel):
     name: str
     value: Optional[str] = None

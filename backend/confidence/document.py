@@ -5,6 +5,8 @@ def score_document(result):
 
     scores = []
 
+    # a field is the entity extracted by an LM. We need to score the extraction
+    # we use all the
     for field in result.fields:
         output = score_field(
             field,
