@@ -1,0 +1,18 @@
+services:
+  app:
+    build: .
+    image: docconf
+    container_name: docconf
+
+    ports:
+      - "8501:8501"
+
+    env_file:
+      - .env
+
+    volumes:
+      - ./samples:/app/samples
+      - ./labels:/app/labels
+      - ./artifacts:/app/artifacts
+
+    restart: unless-stopped

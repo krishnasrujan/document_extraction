@@ -1,0 +1,12 @@
+.venv/
+.venv-verify/
+__pycache__/
+*.pyc
+.pytest_cache/
+artifacts/
+.git/
+.gitignore
+.env
+.DS_Store
+Problem/
+main.py

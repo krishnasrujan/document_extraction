@@ -1,0 +1,1 @@
+"""Alignment stage: locate extracted values within the OCR token stream."""

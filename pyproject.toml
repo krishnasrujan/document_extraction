@@ -1,0 +1,57 @@
+[project]
+name = "docconf"
+version = "0.1.0"
+description = "Calibrated, evidence-backed confidence scoring for document extraction"
+requires-python = ">=3.10"
+
+dependencies = [
+    "pydantic>=2.6",
+    "python-dateutil>=2.9",
+    "rapidfuzz>=3.6",
+    "Pillow>=10.2",
+    "pdf2image>=1.17",
+    "pytesseract>=0.3.10",
+    "numpy>=1.26",
+    "scikit-learn>=1.4",
+    "openai>=1.30",
+    "python-dotenv>=1.0",
+]
+
+
+[project.optional-dependencies]
+
+ui = [
+    "streamlit>=1.33",
+    "matplotlib>=3.8"
+]
+
+dev = [
+    "pytest>=8.0"
+]
+
+
+[build-system]
+
+requires = [
+    "setuptools>=68"
+]
+
+build-backend = "setuptools.build_meta"
+
+
+[tool.setuptools.packages.find]
+
+include = [
+    "backend*"
+]
+
+
+[tool.pytest.ini_options]
+
+testpaths = [
+    "backend/tests"
+]
+
+pythonpath = [
+    "."
+]
