@@ -13,37 +13,7 @@ The system is designed to support multiple document types without changing the c
 
 ## Architecture Overview
 
-The pipeline follows a hybrid OCR + Vision Language Model (VLM) architecture.
-
-Document
-    |
-    |
-Document Loader
-    |
-    |
-Page Image Conversion
-    |
-    +----------------+
-    |                |
-    |                |
-Tesseract OCR     Qwen2.5-VL
-    |                |
-OCR Tokens        Extracted Entities
-(BBox +           (Structured JSON)
-Confidence)
-    |
-    |
-Confidence Engine
-    |
-    |
-Field Confidence
-    |
-    |
-Document Confidence
-    |
-    |
-Routing Decision
-(Approve / Review)
+![Architecture Diagram](docs/architecture.png)
 
 
 ## Methodology
@@ -83,13 +53,13 @@ INV12345
 
 
 The OCR output is represented as tokens:
-
+```json
 {
   "text": "INV12345",
   "confidence": 92,
   "bounding_box": {}
 }
-
+```
 
 ## 3. Vision Language Model Extraction
 
@@ -98,7 +68,7 @@ The extraction layer uses Qwen2.5-VL running locally through Ollama.
 The VLM processes document images and extracts structured entities.
 
 Example:
-
+```
 Input:
 
 Invoice
@@ -112,7 +82,7 @@ Output:
   "invoice_number": "INV12345",
   "total": "$150.00"
 }
-
+```
 
 Extraction rules:
 
@@ -202,14 +172,14 @@ Average(Field Confidence Scores)
 
 
 Example:
-
+```
 Invoice Number    0.95
 Total             0.92
 Date              0.70
 
 
 Document Confidence = 0.85
-
+```
 
 This provides a single reliability score for the complete extraction.
 
@@ -219,7 +189,7 @@ This provides a single reliability score for the complete extraction.
 Based on document confidence, the system determines the next action.
 
 Example:
-
+```
 High Confidence
         |
         |
@@ -230,7 +200,7 @@ Low Confidence
         |
         |
  Manual Review
-
+```
 
 The UI displays:
 
