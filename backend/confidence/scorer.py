@@ -7,62 +7,37 @@ from backend.confidence.signals import (
 
 
 class ConfidenceScorer:
-
-    def calculate(
-        self,
-        field,
-        tokens
-    ):
-
+    def calculate(self, field, tokens):
         signals = [
-            ocr_signal(
-                field,
-                tokens
-            ),
-            extraction_signal(
-                field
-            ),
-            # format_signal(
-            #     field
-            # )
+            ocr_signal(field, tokens),
+            extraction_signal(field),
+            # format_signal(field)
         ]
 
         score = sum(
-            signal["score"] *
-            signal["weight"]
+            signal["score"] * signal["weight"]
             for signal in signals
         )
 
         return FieldConfidence(
-            raw=round(
-                score,
-                2
-            ),
+            raw=round(score, 2),
             signals=[
                 SignalScore(
-                    name=s["name"],
-                    score=s["score"],
-                    weight=s["weight"],
-                    reason=s["reason"]
+                    name=signal["name"],
+                    score=signal["score"],
+                    weight=signal["weight"],
+                    reason=signal["reason"]
                 )
-                for s in signals
+                for signal in signals
             ]
         )
 
-
-    def document_score(
-        self,
-        fields
-    ):
-
-        scores = []
-
-        for field in fields:
-
-            if field.confidence:
-                scores.append(
-                    field.confidence.raw
-                )
+    def document_score(self, fields):
+        scores = [
+            field.confidence.raw
+            for field in fields
+            if field.confidence
+        ]
 
         if not scores:
             return 0

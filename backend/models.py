@@ -68,9 +68,9 @@ class LineItem(BaseModel):
 
 
 class RoutingAction(str, Enum):
-    AUTO_APPROVE = "auto_approve"
-    REVIEW = "review"
-    REJECT = "reject"
+    AUTO_APPROVE = "Auto Approve"
+    REVIEW = "Human Review Required"
+    REJECT = "Reject"
 
 
 class RoutingDecision(BaseModel):

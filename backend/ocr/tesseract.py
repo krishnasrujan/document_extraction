@@ -27,7 +27,7 @@ class TesseractEngine:
             ocr_tokens.append(
                 Token(
                     text=text,
-                    conf=conf / 100,
+                    conf=round(conf / 100, 4),
                     bbox=BBox(
                         x=data["left"][i],
                         y=data["top"][i],

@@ -11,11 +11,7 @@ def validate_invoice_number(value):
 
 
 def validate_currency(value):
-    allowed = [
-        "USD",
-        "INR",
-        "EUR"
-    ]
+    allowed = {"USD", "INR", "EUR"}
 
     return 1 if value in allowed else 0.5
 
@@ -25,28 +21,22 @@ def validate_total(value):
         return 0
 
     try:
-        float(
-            value.replace(",", "")
-        )
+        float(value.replace(",", ""))
         return 1
-    except:
+    except Exception:
         return 0.3
 
 
 def validate_field(field):
-    if field.name == "invoice_number":
-        return validate_invoice_number(
-            field.value
-        )
+    validators = {
+        "invoice_number": validate_invoice_number,
+        "currency": validate_currency,
+        "total": validate_total
+    }
 
-    if field.name == "currency":
-        return validate_currency(
-            field.value
-        )
+    validator = validators.get(field.name)
 
-    if field.name == "total":
-        return validate_total(
-            field.value
-        )
+    if validator:
+        return validator(field.value)
 
     return 0.8 if field.value else 0

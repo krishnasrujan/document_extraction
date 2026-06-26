@@ -1,12 +1,15 @@
 from pathlib import Path
+
 from PIL import Image
 from pdf2image import convert_from_path
 
 from backend.models import PageImage
 
+
 def load_pages(path, output_dir):
     path = Path(path)
     output_dir = Path(output_dir)
+
     output_dir.mkdir(
         parents=True,
         exist_ok=True
@@ -24,16 +27,17 @@ def load_pages(path, output_dir):
 
     pages = []
 
-    for i, img in enumerate(images):
-        output = output_dir / f"page_{i}.png"
-        img.save(output)
+    for index, image in enumerate(images):
+        output = output_dir / f"page_{index}.png"
+
+        image.save(output)
 
         pages.append(
             PageImage(
-                index=i,
+                index=index,
                 path=str(output),
-                width=img.width,
-                height=img.height
+                width=image.width,
+                height=image.height
             )
         )
 

@@ -15,8 +15,6 @@ services:
       OLLAMA_HOST: http://ollama:11434
 
     volumes:
-      - ./samples:/app/samples
-      - ./labels:/app/labels
       - ./artifacts:/app/artifacts
 
     depends_on:
