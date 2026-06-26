@@ -2,9 +2,8 @@ import streamlit as st
 
 from backend.pipeline import Pipeline
 from backend.ocr.tesseract import TesseractEngine
-from backend.extract.vlm_extractor import OpenAIVisionExtractor
-
-from backend.confidence.document import score_document
+from backend.extract.vlm_extractor import VisionExtractor
+from backend.confidence.scorer import ConfidenceScorer
 from backend.confidence.router import route
 
 
@@ -13,17 +12,19 @@ st.set_page_config(
     layout="wide"
 )
 
+
 st.title(
-    "Invoice Extraction Confidence Scoring"
+    "Document Extraction Confidence Scoring"
 )
 
 
 uploaded_file = st.file_uploader(
-    "Upload invoice",
+    "Upload document",
     type=[
         "pdf",
         "png",
-        "jpg"
+        "jpg",
+        "jpeg"
     ]
 )
 
@@ -32,6 +33,7 @@ if uploaded_file:
 
     path = f"artifacts/{uploaded_file.name}"
 
+
     with open(path, "wb") as f:
         f.write(
             uploaded_file.getbuffer()
@@ -39,53 +41,129 @@ if uploaded_file:
 
 
     pipeline = Pipeline(
+
         ocr_engine=TesseractEngine(),
-        llm_extractor=OpenAIVisionExtractor()
+
+        vlm_extractor=VisionExtractor(),
+
+        confidence_engine=ConfidenceScorer()
+
     )
 
 
     result = pipeline.run(
+
         file_path=path,
+
         doc_id=uploaded_file.name
+
     )
 
-
-    confidence = score_document(
-        result
+    document_score = (
+        pipeline.confidence_engine.document_score(
+            result.fields
+        )
     )
 
 
     decision = route(
-        confidence
+        document_score
     )
 
+
+    st.subheader(
+        "Document Type"
+    )
 
     st.subheader(
         "Extracted Fields"
     )
 
+
     for field in result.fields:
 
-        st.write(
-            field.name,
-            field.value
+        confidence = (
+            field.confidence.raw
+            if field.confidence
+            else 0
         )
 
 
+        with st.expander(
+            field.name
+        ):
+
+            if isinstance(field.value, dict):
+
+                st.json(
+                    field.value
+                )
+
+            elif isinstance(field.value, list):
+
+                st.write(
+                    field.value
+                )
+
+            else:
+
+                st.write(
+                    field.value
+                )
+
+
+            st.metric(
+                "Confidence",
+                round(
+                    confidence,
+                    3
+                )
+            )
+
+
+            if field.confidence:
+
+                st.write(
+                    "Signals"
+                )
+
+
+                for signal in field.confidence.signals:
+
+                    st.write(
+                        {
+                            "name": signal.name,
+                            "score": signal.score,
+                            "weight": signal.weight,
+                            "reason": signal.reason
+                        }
+                    )
+
+
     st.subheader(
-        "Confidence"
+        "Document Confidence"
     )
+
 
     st.metric(
-        "Document Score",
-        round(confidence, 3)
+        "Overall Score",
+        round(
+            document_score,
+            3
+        )
     )
 
 
     st.subheader(
-        "Decision"
+        "Routing Decision"
     )
 
-    st.write(
+
+    st.success(
         decision.action.value
+    )
+
+
+    st.write(
+        decision.reasons
     )

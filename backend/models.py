@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Optional
+from typing import Optional, Any
 from pydantic import BaseModel, Field
 
 
@@ -52,7 +52,7 @@ class FieldSource(str, Enum):
 
 class ExtractedField(BaseModel):
     name: str
-    value: Optional[str] = None
+    value: Optional[Any] = None
     bbox: Optional[BBox] = None
     page: Optional[int] = None
     source: FieldSource = FieldSource.VLM

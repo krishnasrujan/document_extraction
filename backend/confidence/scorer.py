@@ -1,7 +1,7 @@
 from backend.models import FieldConfidence, SignalScore
 from backend.confidence.signals import (
     ocr_signal,
-    format_signal,
+    # format_signal,
     extraction_signal
 )
 
@@ -22,9 +22,9 @@ class ConfidenceScorer:
             extraction_signal(
                 field
             ),
-            format_signal(
-                field
-            )
+            # format_signal(
+            #     field
+            # )
         ]
 
         score = sum(

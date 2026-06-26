@@ -1,11 +1,19 @@
+import re
 from difflib import SequenceMatcher
 
 
-def normalize(text):
-    return (
-        text.lower()
-        .replace(" ", "")
-        .replace("-", "")
+def normalize(value):
+
+    if value is None:
+        return ""
+
+    if not isinstance(value,str):
+        value=str(value)
+
+    return re.sub(
+        r"\s+",
+        "",
+        value.lower()
     )
 
 

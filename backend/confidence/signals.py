@@ -1,64 +1,117 @@
 from backend.align.aligner import align_value
-from backend.validate.format import validate_money
+
 
 
 def ocr_signal(field, tokens):
-    aligned = align_value(
+
+
+    if not isinstance(
         field.value,
+        (str, int, float)
+    ):
+
+        return {
+
+            "name":"ocr_alignment",
+
+            "score":0.5,
+
+            "weight":0.5,
+
+            "reason":
+            "complex entity skipped"
+
+        }
+
+
+
+    aligned = align_value(
+
+        field.value,
+
         tokens
+
     )
 
+
+
     if aligned is None:
-        return {
-            "name": "ocr_alignment",
-            "score": 0.0,
-            "weight": 0.4,
-            "reason": "no OCR match"
-        }
 
-    return {
-        "name": "ocr_alignment",
-        "score": aligned["match_ratio"] * aligned["ocr_conf"],
-        "weight": 0.4,
-        "reason": "OCR value aligned"
-    }
-
-
-def format_signal(field):
-
-    if field.name == "total":
-        result = validate_money(
-            field.value
-        )
 
         return {
-            "name": "format",
-            "score": result["score"],
-            "weight": 0.2,
-            "reason": result["reason"]
+
+
+            "name":"ocr_alignment",
+
+            "score":0.0,
+
+            "weight":0.5,
+
+            "reason":
+            "no OCR match"
+
+
         }
 
+
+
     return {
-        "name": "format",
-        "score": 1.0,
-        "weight": 0.2,
-        "reason": "no validation required"
+
+
+        "name":"ocr_alignment",
+
+
+        "score":
+
+            aligned["match_ratio"]
+
+            *
+
+            aligned["ocr_conf"],
+
+
+
+        "weight":0.5,
+
+
+        "reason":
+
+            "OCR value aligned"
+
     }
+
 
 
 def extraction_signal(field):
 
-    if field.value:
+
+    if field.value is not None:
+
+
         return {
-            "name": "extraction",
-            "score": 1.0,
-            "weight": 0.4,
-            "reason": "value extracted"
+
+            "name":"extraction",
+
+            "score":1.0,
+
+            "weight":0.5,
+
+            "reason":
+            "value extracted"
+
         }
 
+
+
     return {
-        "name": "extraction",
-        "score": 0.0,
-        "weight": 0.4,
-        "reason": "missing value"
+
+        "name":"extraction",
+
+        "score":0.0,
+
+        "weight":0.5,
+
+        "reason":
+        "missing value"
+
     }
